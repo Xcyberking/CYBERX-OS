@@ -111,3 +111,8 @@ For local development allow:
 - Provider secrets stay server-side and should be encrypted at rest
 - Audit privileged operations
 - Only manage assets and projects you are authorized to access
+
+
+## Railway Developer Hub integration
+
+Create an account API token in Railway account settings, then expand the Railway card in Developer Hub and connect it. Account tokens can access all resources and workspaces available to that Railway account, so use only your own account and protect the token. CYBERX verifies the token with Railway's `me` query, encrypts it server-side with `INTEGRATION_ENCRYPTION_KEY`, and reads project, service and environment names. The adapter is read-only: it does not deploy, restart services, read variables, create projects or delete resources. Workspace and project tokens are not supported by this account-token form. No new environment variables or database migrations are required beyond the existing Supabase service-role and integration encryption settings.
