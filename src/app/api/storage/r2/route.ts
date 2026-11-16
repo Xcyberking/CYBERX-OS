@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { createClient as createServiceClient, type SupabaseClient } from "@supabase/supabase-js";
 import {
   S3Client, HeadBucketCommand, ListObjectsV2Command, HeadObjectCommand,
   PutObjectCommand, GetObjectCommand, CopyObjectCommand, DeleteObjectCommand, DeleteObjectsCommand
@@ -34,7 +34,7 @@ async function context() {
   return { user, service };
 }
 
-async function saved(ctx: { user: { id: string }; service: ReturnType<typeof createServiceClient> }) {
+async function saved(ctx: { user: { id: string }; service: SupabaseClient<any, "public", "public", any, any> }) {
   const { data, error } = await ctx.service.from("integration_connections")
     .select("id,status,account_label,public_config,secret_ciphertext")
     .eq("owner_id", ctx.user.id).eq("provider", PROVIDER).eq("label", LABEL).maybeSingle();
