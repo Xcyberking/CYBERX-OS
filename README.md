@@ -45,7 +45,11 @@ Copy `.env.example` values into your deployment environment. Required:
 
 Never put service-role keys or provider secrets in browser code or commit them to GitHub.
 
-## GitHub OAuth setup\n\nCreate a GitHub OAuth App and set its Authorization callback URL to `https://YOUR_DOMAIN/api/integrations/github/callback`. Add the four GitHub/encryption environment variables listed above to your host. The callback URL must exactly match `GITHUB_REDIRECT_URI`. Apply the existing database migrations first; `integration_connections.secret_ciphertext` already exists. The current GitHub scope is `read:user` only and the repository browser is read-only for public repositories. Private repository access and write operations are intentionally not enabled.\n\n## Database setup
+## GitHub OAuth setup
+
+Create a GitHub OAuth App and set its Authorization callback URL to `https://YOUR_DOMAIN/api/integrations/github/callback`. Add the four GitHub/encryption environment variables listed above to your host. The callback URL must exactly match `GITHUB_REDIRECT_URI`. Apply the existing database migrations first; `integration_connections.secret_ciphertext` already exists. The current GitHub scope is `read:user` only and the repository browser is read-only for public repositories. Private repository access and write operations are intentionally not enabled.
+
+## Database setup
 
 Run every SQL migration in order in Supabase SQL Editor:
 
@@ -68,7 +72,9 @@ where id = (select id from auth.users where email = 'YOUR_EMAIL_HERE');
 
 The admin API checks the signed-in user's profile role before using the service-role client. Credit changes use an atomic database function and are recorded in the credit ledger and audit log. Apply migrations 0005, 0006 and 0007 too; the complete migration order is 0001 through 0007.
 
-API Studio execution is opt-in. Set `CYBERX_API_ALLOWED_HOSTS` to comma-separated trusted provider domains (for example `api.example.com`). Requests to unlisted hosts and redirects are blocked; calls time out after 15 seconds and responses are capped at 256 KB. Only add APIs and data sources you own or are authorized to use.\n\n## Local development
+API Studio execution is opt-in. Set `CYBERX_API_ALLOWED_HOSTS` to comma-separated trusted provider domains (for example `api.example.com`). Requests to unlisted hosts and redirects are blocked; calls time out after 15 seconds and responses are capped at 256 KB. Only add APIs and data sources you own or are authorized to use.
+
+## Local development
 
 ```bash
 npm install
