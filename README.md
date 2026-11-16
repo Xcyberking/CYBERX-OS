@@ -45,6 +45,7 @@ Run SQL files in order in Supabase SQL Editor:
 1. `supabase/migrations/0001_cyberx_foundation.sql`
 2. `supabase/migrations/0002_profile_permissions.sql`
 3. `supabase/migrations/0003_ecosystem_modules.sql`
+4. `supabase/migrations/0004_tighten_privileged_data.sql`
 
 Create your first account, then promote that account in SQL Editor (replace the email):
 
