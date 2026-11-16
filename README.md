@@ -15,6 +15,8 @@ A modular Next.js control center for your own projects and authorized services.
 - Admin account list, role and credit editor
 - Atomic admin credit adjustments with ledger and audit records
 - In-app notification inbox and admin notification delivery
+- Developer Hub provider directory for GitHub, Vercel, Railway, Render, Cloudflare, Supabase, Firebase and Hugging Face
+- Per-user provider setup records with RLS; tokens and OAuth secrets are deliberately not collected by the UI
 - Community groups, membership controls and member-only group chat
 - Database foundations for bots, API catalog, lawful public-data tools, storage metadata, Firebase projects, community, streaming, plans, purchases and integrations
 - Row Level Security enabled on ecosystem tables
@@ -22,7 +24,7 @@ A modular Next.js control center for your own projects and authorized services.
 
 ## What still requires provider setup
 
-The dashboard and account/project management are implemented. A database schema is not the same as a live third-party integration. Actual bot execution requires a separate worker/runtime; API forwarding requires gateway infrastructure; file and video operations require storage buckets and delivery adapters; GitHub, Firebase, Render, Railway and Cloudflare actions require provider OAuth/API credentials. Those adapters must be connected and tested separately. Do not assume a provider is connected merely because a project record exists.
+The dashboard and account/project management are implemented. A database schema is not the same as a live third-party integration. Actual bot execution requires a separate worker/runtime; API forwarding requires gateway infrastructure; file and video operations require storage buckets and delivery adapters; GitHub, Firebase, Render, Railway, Vercel, Cloudflare and Hugging Face actions require provider OAuth/API credentials. The Developer Hub currently manages provider setup records and official setup checklists only; it does not yet perform live OAuth or provider API actions. Those adapters must be connected and tested separately. Do not assume a provider is connected merely because a project record exists.
 
 Use OSINT features only for lawful public sources and systems you are authorized to access.
 
