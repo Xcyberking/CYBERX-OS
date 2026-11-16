@@ -24,7 +24,7 @@ A modular Next.js control center for your own projects and authorized services.
 
 ## What still requires provider setup
 
-The dashboard and account/project management are implemented. A database schema is not the same as a live third-party integration. Actual bot execution requires a separate worker/runtime; API forwarding requires gateway infrastructure; file and video operations require storage buckets and delivery adapters; GitHub, Firebase, Render, Railway, Vercel, Cloudflare and Hugging Face actions require provider OAuth/API credentials. The Developer Hub currently manages provider setup records and official setup checklists only; it does not yet perform live OAuth or provider API actions. Those adapters must be connected and tested separately. Do not assume a provider is connected merely because a project record exists.
+The dashboard and account/project management are implemented. A database schema is not the same as a live third-party integration. Actual bot execution requires a separate worker/runtime; API forwarding requires gateway infrastructure; file and video operations require storage buckets and delivery adapters; GitHub, Firebase, Render, Railway, Vercel, Cloudflare and Hugging Face actions require provider OAuth/API credentials. The Developer Hub includes a GitHub OAuth connection with encrypted server-side token storage and a read-only public repository browser. Other provider cards currently manage setup records and checklists only. Those adapters must be connected and tested separately. Do not assume a provider is connected merely because a project record exists.
 
 Use OSINT features only for lawful public sources and systems you are authorized to access.
 
@@ -39,11 +39,13 @@ Use OSINT features only for lawful public sources and systems you are authorized
 Copy `.env.example` values into your deployment environment. Required:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-- `SUPABASE_SERVICE_ROLE_KEY` (server only; needed by admin operations)
+- `SUPABASE_SERVICE_ROLE_KEY` (server only; needed by admin operations and encrypted integration storage)
+- `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_REDIRECT_URI` (GitHub OAuth App)
+- `INTEGRATION_ENCRYPTION_KEY` (32-byte hex key; generate with `openssl rand -hex 32`)
 
 Never put service-role keys or provider secrets in browser code or commit them to GitHub.
 
-## Database setup
+## GitHub OAuth setup\n\nCreate a GitHub OAuth App and set its Authorization callback URL to `https://YOUR_DOMAIN/api/integrations/github/callback`. Add the four GitHub/encryption environment variables listed above to your host. The callback URL must exactly match `GITHUB_REDIRECT_URI`. Apply the existing database migrations first; `integration_connections.secret_ciphertext` already exists. The current GitHub scope is `read:user` only and the repository browser is read-only for public repositories. Private repository access and write operations are intentionally not enabled.\n\n## Database setup
 
 Run every SQL migration in order in Supabase SQL Editor:
 
