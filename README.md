@@ -24,7 +24,7 @@ A modular Next.js control center for your own projects and authorized services.
 
 ## What still requires provider setup
 
-The dashboard and account/project management are implemented. A database schema is not the same as a live third-party integration. Actual bot execution requires a separate worker/runtime; API forwarding requires gateway infrastructure; file and video operations require storage buckets and delivery adapters; GitHub, Firebase, Render, Railway, Vercel, Cloudflare, Supabase and Hugging Face actions require provider OAuth/API credentials. The Developer Hub includes a GitHub OAuth connection with encrypted server-side token storage and a read-only public repository browser, plus Vercel, Render, Cloudflare and Supabase token connections with encrypted server-side storage and read-only project/service/bucket inventory. Firebase currently remains a setup record and checklist. Hugging Face now supports an encrypted read-only connection that verifies the account and lists public models, datasets and Spaces; private repository browsing and write actions are not enabled. Do not assume a provider is connected merely because a project record exists.
+The dashboard and account/project management are implemented. A database schema is not the same as a live third-party integration. Actual bot execution requires a separate worker/runtime; API forwarding requires gateway infrastructure; file and video operations require storage buckets and delivery adapters; GitHub, Firebase, Render, Railway, Vercel, Cloudflare, Supabase and Hugging Face actions require provider OAuth/API credentials. The Developer Hub includes a GitHub OAuth connection with encrypted server-side token storage and a read-only public repository browser, plus Vercel, Render, Cloudflare and Supabase token connections with encrypted server-side storage and read-only project/service/bucket inventory. Firebase now supports Google OAuth with the Firebase read-only scope and lists authorized Firebase projects and registered app metadata. It does not read Firestore/Realtime Database records, Storage files, Authentication users, rules or secrets. Hugging Face now supports an encrypted read-only connection that verifies the account and lists public models, datasets and Spaces; private repository browsing and write actions are not enabled. Do not assume a provider is connected merely because a project record exists.
 
 Use OSINT features only for lawful public sources and systems you are authorized to access.
 
@@ -44,6 +44,10 @@ Copy `.env.example` values into your deployment environment. Required:
 - `INTEGRATION_ENCRYPTION_KEY` (32-byte hex key; generate with `openssl rand -hex 32`)
 
 Never put service-role keys or provider secrets in browser code or commit them to GitHub.
+
+## Google OAuth setup for Firebase
+
+Create a Google OAuth 2.0 Web application client. Add the exact authorized redirect URI `https://YOUR_DOMAIN/api/integrations/firebase/callback`, configure the OAuth consent screen, and enable the Firebase Management API in the Google Cloud project. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `GOOGLE_REDIRECT_URI` on the deployment host. The connection requests `openid`, `email` and `https://www.googleapis.com/auth/firebase.readonly`; Google refresh tokens are encrypted server-side. The signed-in Google account must already have permission to view the Firebase projects. This adapter lists Firebase projects and registered app metadata only; it does not read database contents, Storage objects, Authentication users, security rules or project secrets. No database migration is required.
 
 ## GitHub OAuth setup
 
