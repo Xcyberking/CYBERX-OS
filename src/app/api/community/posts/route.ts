@@ -11,7 +11,18 @@ export async function GET() {
       .select("id,author_id,body,visibility,created_at")
       .eq("visibility", "public").order("created_at", { ascending: false }).limit(50);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ posts: data || [] });
+    const posts = data || [];
+    const ids = posts.map(post => post.id);
+    if (!ids.length) return NextResponse.json({ posts: [] });
+    const [{ data: likes }, { data: comments }] = await Promise.all([
+      supabase.from("community_likes").select("post_id,user_id").in("post_id", ids),
+      supabase.from("community_comments").select("post_id").in("post_id", ids)
+    ]);
+    const enriched = posts.map(post => {
+      const postLikes = (likes || []).filter(row => row.post_id === post.id);
+      return { ...post, likes_count: postLikes.length, comments_count: (comments || []).filter(row => row.post_id === post.id).length, liked_by_me: postLikes.some(row => row.user_id === user.id) };
+    });
+    return NextResponse.json({ posts: enriched });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Community is unavailable." }, { status: 500 });
   }
@@ -29,7 +40,7 @@ export async function POST(request: Request) {
       .insert({ author_id: user.id, body: text, visibility: "public" })
       .select("id,author_id,body,visibility,created_at").single();
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-    return NextResponse.json({ post: data }, { status: 201 });
+    return NextResponse.json({ post: { ...data, likes_count: 0, comments_count: 0, liked_by_me: false } }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Could not publish post." }, { status: 400 });
   }
