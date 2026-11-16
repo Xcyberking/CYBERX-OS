@@ -18,10 +18,10 @@ export async function middleware(request: NextRequest) {
     }
   });
 
-  // getClaims() returns the verified JWT payload directly in data.
+  // getClaims() wraps the verified JWT payload in data.claims.
   const { data } = await supabase.auth.getClaims();
   const isProtected = request.nextUrl.pathname.startsWith("/admin");
-  if (isProtected && !data?.sub) {
+  if (isProtected && !data?.claims?.sub) {
     const target = request.nextUrl.clone();
     target.pathname = "/login";
     target.searchParams.set("next", request.nextUrl.pathname);
