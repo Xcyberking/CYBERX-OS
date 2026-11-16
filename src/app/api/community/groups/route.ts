@@ -18,7 +18,7 @@ export async function GET() {
   ]);
   if (error || memberError) return NextResponse.json({ error: "Could not load groups. Apply migration 0008." }, { status: 500 });
   const mine = new Set((memberships || []).map(row => row.group_id));
-  return NextResponse.json({ groups: (groups || []).map(group => ({ ...group, joined: mine.has(group.id) })) });
+  return NextResponse.json({ groups: (groups || []).map(group => ({ ...group, joined: mine.has(group.id), is_owner: group.owner_id === user.id })) });
 }
 
 export async function POST(request: Request) {
