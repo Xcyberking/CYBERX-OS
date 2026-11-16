@@ -18,10 +18,10 @@ export async function middleware(request: NextRequest) {
     }
   });
 
-  // getClaims validates the JWT locally and refreshes cookies when needed.
-  const { data: { claims } } = await supabase.auth.getClaims();
+  // getClaims() returns the verified JWT payload directly in data.
+  const { data } = await supabase.auth.getClaims();
   const isProtected = request.nextUrl.pathname.startsWith("/admin");
-  if (isProtected && !claims?.sub) {
+  if (isProtected && !data?.sub) {
     const target = request.nextUrl.clone();
     target.pathname = "/login";
     target.searchParams.set("next", request.nextUrl.pathname);
