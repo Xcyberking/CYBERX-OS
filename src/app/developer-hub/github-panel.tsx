@@ -1,0 +1,14 @@
+"use client";
+import {useState} from "react";
+import {Github,FolderGit2,ExternalLink,LoaderCircle,Unplug,RefreshCw} from "lucide-react";
+type Repo={id:number;full_name:string;html_url:string;description:string|null;default_branch:string};
+export default function GitHubPanel({connected,account,onDisconnect}:{connected:boolean;account:string;onDisconnect:()=>void}){
+ const [repos,setRepos]=useState<Repo[]>([]),[loading,setLoading]=useState(false),[loaded,setLoaded]=useState(false),[error,setError]=useState("");
+ async function load(){setLoading(true);setError("");try{const r=await fetch("/api/integrations/github/repos",{cache:"no-store"});const d=await r.json();if(!r.ok)throw new Error(d.error||"Could not load public repositories.");setRepos(d.repositories||[]);setLoaded(true);}catch(e){setError(e instanceof Error?e.message:"Could not load repositories.");}finally{setLoading(false);}}
+ return <div className="mt-5 rounded-xl border border-white/[.08] bg-black/20 p-4">
+  <div className="flex items-center gap-2 text-xs text-slate-300"><Github size={15} className="text-cyan-300"/> GitHub account</div>
+  {connected?<><p className="mt-2 text-xs text-emerald-200">Connected as {account||"GitHub user"} · public repositories only</p><div className="mt-3 flex flex-wrap gap-2"><button onClick={()=>void load()} disabled={loading} className="inline-flex items-center gap-2 rounded-lg bg-cyan-300 px-3 py-2 text-xs font-bold text-slate-950 disabled:opacity-50">{loading?<LoaderCircle size={13} className="animate-spin"/>:<FolderGit2 size={13}/>}Load repositories</button><button onClick={onDisconnect} className="inline-flex items-center gap-2 rounded-lg border border-rose-300/20 px-3 py-2 text-xs text-rose-200"><Unplug size={13}/> Disconnect</button></div>
+  {error&&<p role="alert" className="mt-3 text-xs text-rose-200">{error}</p>}
+  {loaded&&<div className="mt-3 max-h-64 space-y-2 overflow-auto">{repos.length===0?<p className="text-xs text-slate-500">No public repositories found.</p>:repos.map(repo=><a key={repo.id} href={repo.html_url} target="_blank" rel="noreferrer" className="block rounded-lg border border-white/[.07] p-3 hover:border-cyan-300/20"><span className="flex items-center justify-between gap-2 text-xs font-semibold text-cyan-100">{repo.full_name}<ExternalLink size={12}/></span><span className="mt-1 block text-[11px] text-slate-500">{repo.description||"No description"} · {repo.default_branch}</span></a>)}</div>}</>:<><p className="mt-2 text-xs leading-5 text-slate-500">Authorize your GitHub account. CYBERX requests basic profile access only; repository browsing is read-only and public-only.</p><a href="/api/integrations/github/connect" className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-300 px-3 py-2.5 text-xs font-bold text-slate-950"><Github size={14}/> Connect GitHub</a></>}
+ </div>;
+}
