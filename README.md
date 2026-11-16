@@ -16,7 +16,7 @@ A modular Next.js control center for your own projects and authorized services.
 - Atomic admin credit adjustments with ledger and audit records
 - In-app notification inbox and admin notification delivery
 - Developer Hub provider directory for GitHub, Vercel, Railway, Render, Cloudflare, Supabase, Firebase and Hugging Face
-- Per-user provider setup records with RLS; tokens and OAuth secrets are deliberately not collected by the UI
+- Per-user provider setup records with RLS and encrypted GitHub OAuth token storage
 - Community groups, membership controls and member-only group chat
 - Database foundations for bots, API catalog, lawful public-data tools, storage metadata, Firebase projects, community, streaming, plans, purchases and integrations
 - Row Level Security enabled on ecosystem tables
