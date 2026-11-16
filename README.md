@@ -4,47 +4,49 @@
 
 A modular Next.js control center for your own projects and authorized services.
 
-## Included in this repository
+## Included
 
 - Responsive mobile-first dashboard
-- Supabase email/password sign-in, registration and PKCE callback
-- Cookie-based server-side session refresh for Next.js 15
-- User profiles, role and credits foundation
-- Project records with per-user ownership and CRUD API
-- Admin user list, role/credit editor and audit events
+- Supabase email/password signup and login
+- Email confirmation callback and password reset
+- Cookie-based server-side auth refresh for Next.js 15
+- User profiles, server-managed roles and credits
+- Per-user project create/list/delete API
+- Admin account list, role and credit editor
+- Credit ledger and privileged-action audit records
 - Database foundations for bots, API catalog, lawful public-data tools, storage metadata, Firebase projects, community, streaming, plans, purchases and integrations
-- Row Level Security enabled on all ecosystem tables
+- Row Level Security enabled on ecosystem tables
 - Health endpoint at `/api/health`
 
-## Important capability boundary
+## What still requires provider setup
 
-This repository provides the account, dashboard, project-management and database foundations. Provider actions are not magically connected by adding a token: bot execution needs a separate worker/runtime, API proxying needs gateway infrastructure, storage needs a bucket and server-side adapter, video needs an authorized delivery path, and GitHub/Firebase/hosting actions need OAuth or service credentials. Those adapters must be configured and tested individually. Do not treat placeholder module screens or database records as live deployments.
+The dashboard and account/project management are implemented. A database schema is not the same as a live third-party integration. Actual bot execution requires a separate worker/runtime; API forwarding requires gateway infrastructure; file and video operations require storage buckets and delivery adapters; GitHub, Firebase, Render, Railway and Cloudflare actions require provider OAuth/API credentials. Those adapters must be connected and tested separately. Do not assume a provider is connected merely because a project record exists.
 
-OSINT tools are restricted to lawful public sources and systems the account owner is authorized to access. Never use this platform to collect private data or access systems without permission.
+Use OSINT features only for lawful public sources and systems you are authorized to access.
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 22+
 - A Supabase project
-- A Vercel or Node.js-compatible deployment
+- Vercel or another Node.js-compatible host
 
-## Environment variables
+## Environment
 
 Copy `.env.example` values into your deployment environment. Required:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-- `SUPABASE_SERVICE_ROLE_KEY` (server-only; needed for admin user management)
+- `SUPABASE_SERVICE_ROLE_KEY` (server only; needed by admin operations)
 
-Never put the service-role key or provider secrets in browser code or commit them to GitHub.
+Never put service-role keys or provider secrets in browser code or commit them to GitHub.
 
 ## Database setup
 
-Run the SQL files in order in Supabase SQL Editor:
+Run SQL files in order in Supabase SQL Editor:
 1. `supabase/migrations/0001_cyberx_foundation.sql`
 2. `supabase/migrations/0002_profile_permissions.sql`
 3. `supabase/migrations/0003_ecosystem_modules.sql`
 
-After creating your first account, use the Supabase SQL Editor to promote that account to admin. Replace the email with your own account email:
+Create your first account, then promote that account in SQL Editor (replace the email):
 
 ```sql
 update public.profiles
@@ -52,7 +54,7 @@ set role = 'admin'
 where id = (select id from auth.users where email = 'YOUR_EMAIL_HERE');
 ```
 
-The admin API checks the signed-in user's database role before using the server-only service-role client. Admin changes to role and credits are recorded in the audit and credit ledger tables.
+The admin API checks the signed-in user's profile role before using the service-role client. Role/credit changes are recorded in audit and credit-ledger tables.
 
 ## Local development
 
@@ -60,36 +62,32 @@ The admin API checks the signed-in user's database role before using the server-
 npm install
 cp .env.example .env.local
 npm run dev
-``
+```
 
 Open `http://localhost:3000`.
 
 ## Deploy
 
-Import this repository into Vercel, set the environment variables above, deploy, then add your production URL to Supabase Auth URL Configuration. Add the callback URL:
+Import this repository into Vercel, set the environment variables, and deploy. In Supabase Auth URL Configuration add your production site URL and callback:
 `https://YOUR_DOMAIN/auth/callback`
 
-For local development also allow:
+For local development allow:
 `http://localhost:3000/auth/callback`
 
-## Service architecture
+## Architecture
 
-- Next.js: dashboard, auth and control APIs
+- Next.js: dashboard, authentication and control APIs
 - Supabase: Auth, Postgres and RLS
 - Separate worker: long-running bot processes and scheduled jobs
 - Cloudflare R2 or another object store: user files and media
 - Provider OAuth/API adapters: GitHub, Firebase and hosting services
 
-## Health check
-
-`GET /api/health` returns service status and whether public Supabase configuration is present.
-
 ## Security
 
-- Row Level Security on exposed tables
-- Owner-scoped project and integration records
-- Role and credit updates are server-only
-- Never trust user-editable metadata for authorization
-- Provider secrets must be encrypted at rest and never returned to browser clients
+- RLS on exposed tables
+- Owner-scoped records
+- Server-only role and credit updates
+- No authorization decisions based on user-editable metadata
+- Provider secrets stay server-side and should be encrypted at rest
 - Audit privileged operations
-- Only connect assets, projects and accounts you are authorized to manage
+- Only manage assets and projects you are authorized to access
