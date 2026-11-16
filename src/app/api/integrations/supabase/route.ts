@@ -85,7 +85,7 @@ export async function GET() {
       status: typeof project.status === "string" ? project.status : "unknown",
       createdAt: typeof project.created_at === "string" ? project.created_at : null,
       organizationId: typeof project.organization_id === "string" ? project.organization_id : null,
-      databaseVersion: typeof project.database?.version === "string" ? project.database.version : null
+      databaseVersion: typeof (project.database as { version?: unknown } | null)?.version === "string" ? (project.database as { version: string }).version : null
     })).filter((project: { id: string }) => project.id);
     const label = "Supabase account · " + result.length + " project" + (result.length === 1 ? "" : "s");
     await ctx.service.from("integration_connections").update({
