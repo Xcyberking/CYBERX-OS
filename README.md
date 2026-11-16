@@ -2,72 +2,94 @@
 
 **One Account. One Dashboard. Complete Digital Ecosystem.**
 
-CYBERX OS is a modular control center intended to bring bot hosting, API management, lawful public-data tools, cloud storage, Firebase projects, community, streaming, and developer integrations into one secure workspace.
+A modular Next.js control center for your own projects and authorized services.
 
-## Current foundation
+## Included in this repository
 
-- Responsive dark dashboard and module navigation
-- Next.js 15 + React 19 + TypeScript
+- Responsive mobile-first dashboard
+- Supabase email/password sign-in, registration and PKCE callback
+- Cookie-based server-side session refresh for Next.js 15
+- User profiles, role and credits foundation
+- Project records with per-user ownership and CRUD API
+- Admin user list, role/credit editor and audit events
+- Database foundations for bots, API catalog, lawful public-data tools, storage metadata, Firebase projects, community, streaming, plans, purchases and integrations
+- Row Level Security enabled on all ecosystem tables
 - Health endpoint at `/api/health`
-- Supabase foundation migration with profile, project and usage tables
-- Row Level Security policies for user-owned records
-- Environment template for future integrations
 
-> This is the initial foundation, not a claim that every integration is already operational. Modules are being implemented incrementally.
+## Important capability boundary
 
-## Modules roadmap
+This repository provides the account, dashboard, project-management and database foundations. Provider actions are not magically connected by adding a token: bot execution needs a separate worker/runtime, API proxying needs gateway infrastructure, storage needs a bucket and server-side adapter, video needs an authorized delivery path, and GitHub/Firebase/hosting actions need OAuth or service credentials. Those adapters must be configured and tested individually. Do not treat placeholder module screens or database records as live deployments.
 
-1. Authentication, profiles, roles and admin controls
-2. Bot hosting integrations (Railway / Render / VPS)
-3. API Studio and API gateway
-4. Lawful OSINT/public-data tool catalog
-5. Cloud storage and verified backups
-6. Firebase project manager
-7. Community and moderation
-8. Video streaming
-9. GitHub and deployment hub
-10. Wallet, credits, plans and audit logs
+OSINT tools are restricted to lawful public sources and systems the account owner is authorized to access. Never use this platform to collect private data or access systems without permission.
+
+## Requirements
+
+- Node.js 20+
+- A Supabase project
+- A Vercel or Node.js-compatible deployment
+
+## Environment variables
+
+Copy `.env.example` values into your deployment environment. Required:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
+- `SUPABASE_SERVICE_ROLE_KEY` (server-only; needed for admin user management)
+
+Never put the service-role key or provider secrets in browser code or commit them to GitHub.
+
+## Database setup
+
+Run the SQL files in order in Supabase SQL Editor:
+1. `supabase/migrations/0001_cyberx_foundation.sql`
+2. `supabase/migrations/0002_profile_permissions.sql`
+3. `supabase/migrations/0003_ecosystem_modules.sql`
+
+After creating your first account, use the Supabase SQL Editor to promote that account to admin. Replace the email with your own account email:
+
+```sql
+update public.profiles
+set role = 'admin'
+where id = (select id from auth.users where email = 'YOUR_EMAIL_HERE');
+```
+
+The admin API checks the signed-in user's database role before using the server-only service-role client. Admin changes to role and credits are recorded in the audit and credit ledger tables.
 
 ## Local development
-
-Requirements: Node.js 20+ and npm.
 
 ```bash
 npm install
 cp .env.example .env.local
 npm run dev
-```
+``
 
-Open http://localhost:3000.
+Open `http://localhost:3000`.
 
-## Environment
+## Deploy
 
-See `.env.example`. Supabase is optional for the current dashboard shell, but required for authentication and persisted user data in the next phase.
+Import this repository into Vercel, set the environment variables above, deploy, then add your production URL to Supabase Auth URL Configuration. Add the callback URL:
+`https://YOUR_DOMAIN/auth/callback`
 
-Never commit real credentials. Never expose `SUPABASE_SERVICE_ROLE_KEY`, provider secrets, deployment tokens or private API keys in browser code.
+For local development also allow:
+`http://localhost:3000/auth/callback`
 
-## Database setup
+## Service architecture
 
-Review and apply `supabase/migrations/0001_cyberx_foundation.sql` to your Supabase project. The migration enables RLS. Admin role and credit changes must be performed by trusted server-side code; do not allow users to set their own role or credits.
+- Next.js: dashboard, auth and control APIs
+- Supabase: Auth, Postgres and RLS
+- Separate worker: long-running bot processes and scheduled jobs
+- Cloudflare R2 or another object store: user files and media
+- Provider OAuth/API adapters: GitHub, Firebase and hosting services
 
 ## Health check
 
-`GET /api/health` returns application status and whether the public Supabase configuration is present.
+`GET /api/health` returns service status and whether public Supabase configuration is present.
 
-## Deployment
+## Security
 
-Deploy the Next.js app to Vercel or another Node.js-compatible host. Add environment variables in the host dashboard. Background bot workloads and long-running jobs should run as separate services (for example, Railway/Render/VPS), not inside short-lived web requests.
-
-## Security principles
-
-- Least-privilege OAuth scopes
-- Per-user ownership checks and RLS
-- Server-side secret storage
-- Audit events for privileged actions
-- Rate limits and request validation
-- Backups with restore testing
-- Only manage projects and data the account owner is authorized to access
-
-## License
-
-All rights reserved unless a license is added by the repository owner.
+- Row Level Security on exposed tables
+- Owner-scoped project and integration records
+- Role and credit updates are server-only
+- Never trust user-editable metadata for authorization
+- Provider secrets must be encrypted at rest and never returned to browser clients
+- Audit privileged operations
+- Only connect assets, projects and accounts you are authorized to manage
