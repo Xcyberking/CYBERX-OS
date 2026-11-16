@@ -47,7 +47,9 @@ Never put service-role keys or provider secrets in browser code or commit them t
 
 ## GitHub OAuth setup
 
-Create a GitHub OAuth App and set its Authorization callback URL to `https://YOUR_DOMAIN/api/integrations/github/callback`. Add the four GitHub/encryption environment variables listed above to your host. The callback URL must exactly match `GITHUB_REDIRECT_URI`. Apply the existing database migrations first; `integration_connections.secret_ciphertext` already exists. The current GitHub scope is `read:user` only and the repository browser is read-only for public repositories. Private repository access and write operations are intentionally not enabled.\n\nFor Vercel, create a scoped access token with read access to the projects you want to view. Expand the Vercel card in Developer Hub and paste the token into the secure connection form. CYBERX verifies the token, encrypts it using `INTEGRATION_ENCRYPTION_KEY`, and shows project and recent deployment status only. It does not deploy, delete projects, or read environment variables.
+Create a GitHub OAuth App and set its Authorization callback URL to `https://YOUR_DOMAIN/api/integrations/github/callback`. Add the four GitHub/encryption environment variables listed above to your host. The callback URL must exactly match `GITHUB_REDIRECT_URI`. Apply the existing database migrations first; `integration_connections.secret_ciphertext` already exists. The current GitHub scope is `read:user` only and the repository browser is read-only for public repositories. Private repository access and write operations are intentionally not enabled.
+
+For Vercel, create a scoped access token with read access to the projects you want to view. Expand the Vercel card in Developer Hub and paste the token into the secure connection form. CYBERX verifies the token, encrypts it using `INTEGRATION_ENCRYPTION_KEY`, and shows project and recent deployment status only. It does not deploy, delete projects, or read environment variables.
 
 ## Database setup
 
