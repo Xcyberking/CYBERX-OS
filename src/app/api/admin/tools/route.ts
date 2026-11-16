@@ -14,15 +14,17 @@ async function adminClient(){
   if(!url||!key)return {response:NextResponse.json({error:"Server admin configuration is missing."},{status:503})};
   return {client:createSupabaseClient(url,key,{auth:{autoRefreshToken:false,persistSession:false}}),actorId:user.id};
 }
-function validate(body:any){
-  const name=typeof body.name==="string"?body.name.trim().slice(0,80):"";
-  const description=typeof body.description==="string"?body.description.trim().slice(0,500):"";
-  const category=typeof body.category==="string"?body.category.trim().slice(0,60)||"general":"general";
-  const method=String(body.method||"GET").toUpperCase();
-  const creditCost=Number(body.credit_cost);
-  const endpoint=new URL(String(body.endpoint_url||""));
+function validate(body: unknown){
+  if(typeof body!=="object"||body===null) throw new Error("Tool details are required.");
+  const input=body as Record<string,unknown>;
+  const name=typeof input.name==="string"?input.name.trim().slice(0,80):"";
+  const description=typeof input.description==="string"?input.description.trim().slice(0,500):"";
+  const category=typeof input.category==="string"?input.category.trim().slice(0,60)||"general":"general";
+  const method=String(input.method||"GET").toUpperCase();
+  const creditCost=Number(input.credit_cost);
+  const endpoint=new URL(String(input.endpoint_url||""));
   if(!name||endpoint.protocol!=="https:"||endpoint.username||endpoint.password||!["GET","POST","PUT","PATCH","DELETE"].includes(method)||!Number.isSafeInteger(creditCost)||creditCost<0||creditCost>100000)throw new Error("Enter a name, valid HTTPS endpoint, method and non-negative credit cost.");
-  return {name,description,category,method,credit_cost:creditCost,endpoint_url:endpoint.toString(),is_active:Boolean(body.is_active)};
+  return {name,description,category,method,credit_cost:creditCost,endpoint_url:endpoint.toString(),is_active:Boolean(input.is_active)};
 }
 export async function GET(){
   const ctx=await adminClient();if("response" in ctx)return ctx.response;

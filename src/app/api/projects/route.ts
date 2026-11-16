@@ -24,9 +24,9 @@ export async function POST(request: Request) {
     const body = await request.json();
     const name = typeof body.name === "string" ? body.name.trim().slice(0, 80) : "";
     const allowed = ["bot-hosting","api-studio","osint","cloud-storage","firebase","community","streaming","developer-hub"];
-    const module = typeof body.module === "string" ? body.module : "";
-    if (!name || !allowed.includes(module)) return NextResponse.json({ error: "Enter a project name and choose a valid module." }, { status: 400 });
-    const { data, error } = await supabase.from("projects").insert({ owner_id: user.id, name, module }).select("id,name,module,status,created_at").single();
+    const moduleName = typeof body.module === "string" ? body.module : "";
+    if (!name || !allowed.includes(moduleName)) return NextResponse.json({ error: "Enter a project name and choose a valid module." }, { status: 400 });
+    const { data, error } = await supabase.from("projects").insert({ owner_id: user.id, name, module: moduleName }).select("id,name,module,status,created_at").single();
     if (error) throw error;
     return NextResponse.json({ project: data }, { status: 201 });
   } catch (error) {
