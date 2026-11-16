@@ -15,6 +15,7 @@ A modular Next.js control center for your own projects and authorized services.
 - Admin account list, role and credit editor
 - Atomic admin credit adjustments with ledger and audit records
 - In-app notification inbox and admin notification delivery
+- Community groups, membership controls and member-only group chat
 - Database foundations for bots, API catalog, lawful public-data tools, storage metadata, Firebase projects, community, streaming, plans, purchases and integrations
 - Row Level Security enabled on ecosystem tables
 - Health endpoint at `/api/health`
@@ -51,6 +52,7 @@ Run every SQL migration in order in Supabase SQL Editor:
 5. `supabase/migrations/0005_private_cloud_storage.sql`
 6. `supabase/migrations/0006_wallet_and_community.sql`
 7. `supabase/migrations/0007_admin_credits_and_notifications.sql`
+8. `supabase/migrations/0008_community_groups_and_chat.sql`
 
 Create your first account, then promote that account in SQL Editor (replace the email):
 
