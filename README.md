@@ -57,7 +57,7 @@ where id = (select id from auth.users where email = 'YOUR_EMAIL_HERE');
 
 The admin API checks the signed-in user's profile role before using the service-role client. Role/credit changes are recorded in audit and credit-ledger tables.
 
-## Local development
+API Studio execution is opt-in. Set `CYBERX_API_ALLOWED_HOSTS` to comma-separated trusted provider domains (for example `api.example.com`). Requests to unlisted hosts and redirects are blocked; calls time out after 15 seconds and responses are capped at 256 KB. Only add APIs and data sources you own or are authorized to use.\n\n## Local development
 
 ```bash
 npm install
