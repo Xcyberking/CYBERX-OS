@@ -202,7 +202,7 @@ export async function POST(request: Request) {
       const connection = await saved(ctx);
       if (!connection) return NextResponse.json({ error: "Connect your R2 bucket first." }, { status: 409 });
       const userPrefix = ctx.user.id + "/";
-      const objects = await listAll(connection.client, connection.bucket, userPrefix, MAX_BACKUP_FILES + 1);
+      const objects = await listAll(connection.client, connection.bucket, userPrefix, 2000);
       const sources = objects.filter(item => !item.Key.startsWith(userPrefix + BACKUP_ROOT + "/"));
       if (sources.length > MAX_BACKUP_FILES) return NextResponse.json({ error: "A snapshot can contain up to 100 files. Remove or split files and try again." }, { status: 413 });
       const id = crypto.randomUUID();
