@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
   Activity, ArrowUpRight, Bot, Boxes, Cloud, Code2, Command, Database,
   Github, Gauge, LayoutDashboard, LifeBuoy, Menu, Search, Settings,
   ShieldCheck, Sparkles, Users, Video, Wallet, PlugZap, Server,
-  Bell, ChevronRight, LogOut, Plus, Trash2, X, LoaderCircle, FolderKanban
+  ChevronRight, LogOut, Plus, Trash2, X, LoaderCircle, FolderKanban
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -86,7 +86,7 @@ export default function Home() {
     try { const supabase=createClient(); await supabase.auth.signOut(); }
     finally { window.location.href="/"; }
   }
-  async function createProject(event: React.FormEvent<HTMLFormElement>) {
+  async function createProject(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setSaving(true); setError("");
     try {
       const response=await fetch("/api/projects",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:projectName,module:projectModule})});
