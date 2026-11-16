@@ -13,7 +13,8 @@ A modular Next.js control center for your own projects and authorized services.
 - User profiles, server-managed roles and credits
 - Per-user project create/list/delete API
 - Admin account list, role and credit editor
-- Credit ledger and privileged-action audit records
+- Atomic admin credit adjustments with ledger and audit records
+- In-app notification inbox and admin notification delivery
 - Database foundations for bots, API catalog, lawful public-data tools, storage metadata, Firebase projects, community, streaming, plans, purchases and integrations
 - Row Level Security enabled on ecosystem tables
 - Health endpoint at `/api/health`
@@ -55,7 +56,7 @@ set role = 'admin'
 where id = (select id from auth.users where email = 'YOUR_EMAIL_HERE');
 ```
 
-The admin API checks the signed-in user's profile role before using the service-role client. Role/credit changes are recorded in audit and credit-ledger tables.
+The admin API checks the signed-in user's profile role before using the service-role client. Credit changes use an atomic database function and are recorded in the credit ledger and audit log. Apply migrations 0005, 0006 and 0007 too; the complete migration order is 0001 through 0007.
 
 API Studio execution is opt-in. Set `CYBERX_API_ALLOWED_HOSTS` to comma-separated trusted provider domains (for example `api.example.com`). Requests to unlisted hosts and redirects are blocked; calls time out after 15 seconds and responses are capped at 256 KB. Only add APIs and data sources you own or are authorized to use.\n\n## Local development
 

@@ -51,21 +51,16 @@ export async function PATCH(request: Request) {
     if (userId === context.actorId && role !== "admin") {
       return NextResponse.json({ error: "You cannot remove your own admin access here." }, { status: 400 });
     }
-    const { data: before, error: readError } = await context.admin.from("profiles").select("credits,role").eq("id", userId).single();
-    if (readError || !before) return NextResponse.json({ error: "User profile not found." }, { status: 404 });
-    const { error: updateError } = await context.admin.from("profiles").update({ role, credits, updated_at: new Date().toISOString() }).eq("id", userId);
-    if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
-
-    const delta = credits - before.credits;
-    if (delta !== 0) {
-      const { error: ledgerError } = await context.admin.from("credit_transactions").insert({
-        user_id: userId, admin_id: context.actorId, amount: delta, balance_after: credits, reason
-      });
-      if (ledgerError) return NextResponse.json({ error: "Profile updated, but credit ledger write failed: " + ledgerError.message }, { status: 500 });
-    }
+    const { error: creditError } = await context.admin.rpc("admin_set_user_credits", {
+      p_actor_id: context.actorId, p_user_id: userId, p_new_balance: credits, p_reason: reason
+    });
+    if (creditError) return NextResponse.json({ error: creditError.message }, { status: 400 });
+    const { error: roleError } = await context.admin.from("profiles")
+      .update({ role, updated_at: new Date().toISOString() }).eq("id", userId);
+    if (roleError) return NextResponse.json({ error: "Credits saved, but role update failed: " + roleError.message }, { status: 500 });
     await context.admin.from("audit_logs").insert({
-      actor_id: context.actorId, action: "admin.profile.updated", target_id: userId,
-      details: { previous_role: before.role, role, previous_credits: before.credits, credits, reason }
+      actor_id: context.actorId, action: "admin.profile.role_updated", target_id: userId,
+      details: { role }
     });
     return NextResponse.json({ ok: true, credits, role });
   } catch {
