@@ -1,7 +1,7 @@
 "use client";
 import {FormEvent,useEffect,useState} from "react";
 import Link from "next/link";
-import {ArrowLeft,Code2,LoaderCircle,Plus,Trash2,Download,Search,Clock3,Copy} from "lucide-react";
+import {ArrowLeft,Code2,LoaderCircle,Plus,Trash2,Download,Clock3,Copy} from "lucide-react";
 type Endpoint={id:string;name:string;endpoint_url:string;method:string;description:string;is_enabled:boolean;created_at:string};
 export default function ApiStudioPage(){
  const [items,setItems]=useState<Endpoint[]>([]);const [name,setName]=useState("");const [url,setUrl]=useState("");const [method,setMethod]=useState("GET");const [description,setDescription]=useState("");const [busy,setBusy]=useState(false);const [loading,setLoading]=useState(true);const [message,setMessage]=useState("");const [running,setRunning]=useState<string|null>(null);const [output,setOutput]=useState<string>("");const [paramsText,setParamsText]=useState("{\\n  \\n}");const [filter,setFilter]=useState("");const [history,setHistory]=useState<Array<{name:string;status:number;durationMs:number;at:string}>>([]);
