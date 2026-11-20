@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
-import {ArrowLeft,Database,ExternalLink,Copy,Search,RefreshCw,CheckCircle2} from "lucide-react";
+import {ArrowLeft,Database,ExternalLink,Copy,Search,RefreshCw} from "lucide-react";
 type Project={id:string;name:string;project_id:string;app_id:string|null;database_url:string|null;created_at:string};
 const KEY="cyberx-firebase-readiness-v1";
 export default function FirebaseConsolePage(){const [projects,setProjects]=useState<Project[]>([]);const [query,setQuery]=useState("");const [checks,setChecks]=useState<Record<string,string[]>>({});const [error,setError]=useState("");const [loading,setLoading]=useState(true);
