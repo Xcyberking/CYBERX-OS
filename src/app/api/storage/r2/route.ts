@@ -34,7 +34,7 @@ async function context() {
   return { user, service };
 }
 
-async function saved(ctx: { user: { id: string }; service: SupabaseClient<any, "public", "public", any, any> }) {
+async function saved(ctx: { user: { id: string }; service: SupabaseClient }) {
   const { data, error } = await ctx.service.from("integration_connections")
     .select("id,status,account_label,public_config,secret_ciphertext")
     .eq("owner_id", ctx.user.id).eq("provider", PROVIDER).eq("label", LABEL).maybeSingle();
