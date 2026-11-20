@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowLeft, Bookmark, Clapperboard, Clock3, ListVideo, Plus, Play, Trash2, Video, Eye, CalendarDays } from "lucide-react";
+import { ArrowLeft, Clapperboard, Clock3, ListVideo, Plus, Play, Trash2, Video, Eye, CalendarDays } from "lucide-react";
 
 type Clip = { id:string; title:string; category:string; description:string; url:string; addedAt:string };
 type Draft = { id:string; title:string; category:string; publishDate:string; status:"Idea"|"Editing"|"Ready"; notes:string; manualViews:number };
